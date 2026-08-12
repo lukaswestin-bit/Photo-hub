@@ -373,31 +373,49 @@
 
             const reader = new FileReader();
             reader.onload = (event) => {
-                mediaData = {
-                    data: event.target.result,
-                    type: file.type,
-                    name: file.name,
-                    timestamp: Date.now(),
-                    uploadedBy: 'admin'
-                };
+                try {
+                    const dataUrl = event.target.result;
+                    mediaData = {
+                        data: dataUrl,
+                        type: file.type,
+                        name: file.name,
+                        timestamp: Date.now(),
+                        uploadedBy: 'admin'
+                    };
 
-                // Store in localStorage for other tabs/windows
-                localStorage.setItem('broadcastMedia', JSON.stringify(mediaData));
-                displayMedia(mediaData);
+                    // Store in localStorage for other tabs/windows
+                    try {
+                        localStorage.setItem('broadcastMedia', JSON.stringify(mediaData));
+                        localStorage.setItem('mediaTimestamp', Date.now().toString());
+                        // Trigger storage event for same-browser tabs
+                        window.dispatchEvent(new StorageEvent('storage', {
+                            key: 'broadcastMedia',
+                            newValue: JSON.stringify(mediaData),
+                            url: window.location.href
+                        }));
+                    } catch (e) {
+                        console.error('localStorage full or unavailable:', e);
+                    }
 
-                // Broadcast to all connected clients via WebSocket
-                if (socket && socket.readyState === WebSocket.OPEN) {
-                    socket.send(JSON.stringify({
-                        type: 'media-upload',
-                        media: mediaData,
-                        isAdmin: true
-                    }));
+                    displayMedia(mediaData);
+
+                    // Broadcast to all connected clients via WebSocket
+                    if (socket && socket.readyState === WebSocket.OPEN) {
+                        socket.send(JSON.stringify({
+                            type: 'media-upload',
+                            media: mediaData,
+                            isAdmin: true
+                        }));
+                    }
+
+                    document.getElementById('uploadStatus').innerHTML = `<div class="status connected">✓ Media broadcasted: ${file.name}</div>`;
+                    setTimeout(() => {
+                        document.getElementById('uploadStatus').innerHTML = '';
+                    }, 3000);
+                } catch (err) {
+                    console.error('Error uploading media:', err);
+                    document.getElementById('uploadStatus').innerHTML = `<div class="login-error">Error uploading media</div>`;
                 }
-
-                document.getElementById('uploadStatus').innerHTML = `<div class="status connected">✓ Media broadcasted: ${file.name}</div>`;
-                setTimeout(() => {
-                    document.getElementById('uploadStatus').innerHTML = '';
-                }, 3000);
             };
 
             reader.readAsDataURL(file);
@@ -405,19 +423,38 @@
 
         // Display media in broadcast area
         function displayMedia(media) {
-            const display = document.getElementById('mediaDisplay');
-            display.innerHTML = '';
+            try {
+                const display = document.getElementById('mediaDisplay');
+                if (!display) return;
+                
+                display.innerHTML = '';
 
-            if (media.type.startsWith('image')) {
-                const img = document.createElement('img');
-                img.src = media.data;
-                display.appendChild(img);
-            } else if (media.type.startsWith('video')) {
-                const video = document.createElement('video');
-                video.src = media.data;
-                video.controls = true;
-                video.autoplay = true;
-                display.appendChild(video);
+                if (!media || !media.type) {
+                    display.innerHTML = '<p class="no-media">Waiting for content...</p>';
+                    return;
+                }
+
+                if (media.type.startsWith('image')) {
+                    const img = document.createElement('img');
+                    img.src = media.data;
+                    img.onerror = () => {
+                        console.error('Image failed to load');
+                        display.innerHTML = '<p class="no-media">Image failed to load</p>';
+                    };
+                    display.appendChild(img);
+                } else if (media.type.startsWith('video')) {
+                    const video = document.createElement('video');
+                    video.src = media.data;
+                    video.controls = true;
+                    video.autoplay = true;
+                    video.onerror = () => {
+                        console.error('Video failed to load');
+                        display.innerHTML = '<p class="no-media">Video failed to load</p>';
+                    };
+                    display.appendChild(video);
+                }
+            } catch (err) {
+                console.error('Error displaying media:', err);
             }
         }
 
@@ -434,13 +471,37 @@
         }
 
         // Poll for updates from other tabs
+        let lastMediaTimestamp = 0;
+        
         function pollMedia() {
-            const stored = localStorage.getItem('broadcastMedia');
-            if (stored) {
-                const media = JSON.parse(stored);
-                displayMedia(media);
+            try {
+                const stored = localStorage.getItem('broadcastMedia');
+                if (stored) {
+                    const media = JSON.parse(stored);
+                    if (media && media.timestamp && media.timestamp > lastMediaTimestamp) {
+                        lastMediaTimestamp = media.timestamp;
+                        displayMedia(media);
+                    }
+                }
+            } catch (err) {
+                console.error('Error polling media:', err);
             }
         }
+
+        // Listen for storage changes from other tabs
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'broadcastMedia' && e.newValue) {
+                try {
+                    const media = JSON.parse(e.newValue);
+                    if (media) {
+                        lastMediaTimestamp = media.timestamp || 0;
+                        displayMedia(media);
+                    }
+                } catch (err) {
+                    console.error('Error processing storage event:', err);
+                }
+            }
+        });
 
         setInterval(pollMedia, 500);
         pollMedia();
