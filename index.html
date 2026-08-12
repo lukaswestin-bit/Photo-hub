@@ -1,152 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo/Video Broadcast</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
- <!DOCTYPE html>
- <html lang="en">
- <head>
-     <meta charset="UTF-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>Photo/Video Broadcast</title>
-     <style>
-         * {
-             margin: 0;
-             padding: 0;
-             box-sizing: border-box;
-         }
- 
-         body {
-             font-family: Arial, sans-serif;
-             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-             min-height: 100vh;
-             display: flex;
-             justify-content: center;
-             align-items: center;
-             padding: 20px;
-         }
- 
-         .container {
-             background: white;
-             border-radius: 10px;
-             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-             max-width: 900px;
-             width: 100%;
-             padding: 30px;
-         }
- 
-         h1 {
-             text-align: center;
-             color: #333;
-             margin-bottom: 30px;
-         }
- 
-         .admin-section {
-             background: #f5f5f5;
-             padding: 20px;
-             border-radius: 8px;
-             margin-bottom: 30px;
-             border-left: 4px solid #667eea;
-         }
- 
-         .admin-section h2 {
-             color: #667eea;
-             font-size: 18px;
-             margin-bottom: 15px;
-         }
- 
-         .upload-area {
-             border: 2px dashed #667eea;
-             border-radius: 8px;
-             padding: 30px;
-             text-align: center;
-             cursor: pointer;
-             transition: background 0.3s;
-             background: #f9f9f9;
-         }
- 
-         .upload-area:hover {
-             background: #efefef;
-         }
- 
-         .upload-area p {
-             color: #666;
-             margin-bottom: 10px;
-         }
- 
-         input[type="file"] {
-             display: none;
-         }
- 
-         .upload-btn {
-             background: #667eea;
-             color: white;
-             border: none;
-             padding: 10px 20px;
-             border-radius: 5px;
-             cursor: pointer;
-             font-size: 14px;
-             transition: background 0.3s;
-         }
- 
-         .upload-btn:hover {
-             background: #764ba2;
-         }
- 
-         .broadcast-section {
-             text-align: center;
-         }
- 
-         .broadcast-section h2 {
-             color: #333;
-             margin-bottom: 20px;
-             font-size: 18px;
-         }
- 
-         #mediaDisplay {
-             max-width: 100%;
-             max-height: 500px;
-             border-radius: 8px;
-             background: #000;
-             display: flex;
-             justify-content: center;
-             align-items: center;
-             min-height: 300px;
-         }
- 
-         #mediaDisplay img,
-         #mediaDisplay video {
-             max-width: 100%;
-             max-height: 500px;
-             border-radius: 8px;
-         }
- 
-         .no-media {
-             color: #999;
-             font-size: 18px;
-         }
- 
-         .status {
-             margin-top: 20px;
-             padding: 10px;
-             border-radius: 5px;
-             text-align: center;
-             font-size: 14px;
-         }
- 
-         .status.connected {
-             background: #d4edda;
-             color: #155724;
-             border: 1px solid #c3e6cb;
-         }
- 
-         .status.disconnected {
-             background: #f8d7da;
-             color: #721c24;
-             border: 1px solid #f5c6cb;
-         }
- 
-         .viewer-count {
-             text-align: center;
-             color: #666;
-             margin-top: 15px;
-             font-size: 14px;
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
 
         .login-section {
             background: #f5f5f5;
@@ -155,6 +43,12 @@
             margin-bottom: 30px;
             border-left: 4px solid #667eea;
             text-align: center;
+        }
+
+        .login-section h2 {
+            color: #667eea;
+            font-size: 18px;
+            margin-bottom: 15px;
         }
 
         .login-section input {
@@ -189,6 +83,7 @@
             cursor: pointer;
             font-size: 12px;
             transition: background 0.3s;
+            margin-left: 10px;
         }
 
         .logout-btn:hover {
@@ -196,41 +91,54 @@
         }
 
         .admin-status {
-            text-align: center;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
             color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
             font-weight: bold;
-            margin-bottom: 15px;
         }
 
-        .admin-section.hidden {
-            display: none;
-        }
-
-        .login-message {
-            color: #721c24;
-            margin-top: 10px;
-            font-size: 14px;
-        }
-         }
-
-        .login-section {
+        .admin-section {
             background: #f5f5f5;
             padding: 20px;
             border-radius: 8px;
             margin-bottom: 30px;
             border-left: 4px solid #667eea;
+        }
+
+        .admin-section h2 {
+            color: #667eea;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .upload-area {
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 30px;
             text-align: center;
+            cursor: pointer;
+            transition: background 0.3s;
+            background: #f9f9f9;
         }
 
-        .login-section input {
-            padding: 10px;
-            margin: 10px 5px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
+        .upload-area:hover {
+            background: #efefef;
         }
 
-        .login-btn {
+        .upload-area p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .upload-btn {
             background: #667eea;
             color: white;
             border: none;
@@ -241,233 +149,318 @@
             transition: background 0.3s;
         }
 
-        .login-btn:hover {
+        .upload-btn:hover {
             background: #764ba2;
         }
 
-        .logout-btn {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: background 0.3s;
-        }
-
-        .logout-btn:hover {
-            background: #c82333;
-        }
-
-        .admin-status {
+        .broadcast-section {
             text-align: center;
-            color: #155724;
-            font-weight: bold;
-            margin-bottom: 15px;
         }
 
-        .admin-section.hidden {
+        .broadcast-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        #mediaDisplay {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 8px;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+        }
+
+        #mediaDisplay img,
+        #mediaDisplay video {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 8px;
+        }
+
+        .no-media {
+            color: #999;
+            font-size: 18px;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .viewer-count {
+            text-align: center;
+            color: #666;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .hidden {
             display: none;
         }
 
-        .login-message {
+        .login-error {
             color: #721c24;
             margin-top: 10px;
             font-size: 14px;
         }
-     </style>
- </head>
- <body>
-     <div class="container">
-         <h1>📺 Photo/Video Broadcast</h1>
- 
-         <div class="admin-section">
-             <h2>Admin Panel - Upload Media</h2>
-             <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-                 <p>Click to upload or drag and drop</p>
-                 <p style="font-size: 12px; color: #999;">Photos or Videos</p>
-                 <button class="upload-btn">Choose File</button>
-             </div>
-             <input type="file" id="fileInput" accept="image/*,video/*">
-             <div id="uploadStatus"></div>
-         </div>
- 
-         <div class="broadcast-section">
-             <h2>📡 Live Broadcast</h2>
-             <div id="mediaDisplay">
-                 <p class="no-media">Waiting for content...</p>
-             </div>
-             <div class="viewer-count">
-                 Viewers connected: <span id="viewerCount">0</span>
-             </div>
-             <div id="status" class="status disconnected">Disconnected</div>
-         </div>
-     </div>
- 
-     <script>
-         const isAdmin = true; // Set admin credentials
-         let socket;
-         let mediaData = null;
- 
-         // Initialize WebSocket connection
-         function initWebSocket() {
-             socket = new WebSocket('ws://localhost:8080');
- 
-             socket.onopen = () => {
-                 console.log('Connected to server');
-                 updateStatus(true);
-                 socket.send(JSON.stringify({ type: 'admin-check', isAdmin }));
-             };
- 
-             socket.onmessage = (event) => {
-                 const message = JSON.parse(event.data);
- 
-                 if (message.type === 'media-update') {
-                     displayMedia(message.data);
-                 }
- 
-                 if (message.type === 'viewer-count') {
-                     document.getElementById('viewerCount').textContent = message.count;
-                 }
-             };
- 
-             socket.onclose = () => {
-                 console.log('Disconnected from server');
-                 updateStatus(false);
-                 setTimeout(initWebSocket, 3000);
-             };
- 
-             socket.onerror = (error) => {
-                 console.error('WebSocket error:', error);
-                 updateStatus(false);
-             };
-         }
- 
-         // Handle file upload
-         document.getElementById('fileInput').addEventListener('change', (e) => {
-             const file = e.target.files[0];
-             if (!file) return;
- 
-             const reader = new FileReader();
-             reader.onload = (event) => {
-                 mediaData = {
-                     data: event.target.result,
-                     type: file.type,
-                     name: file.name
-                 };
- 
-                 displayMedia(mediaData);
- 
-                 // Broadcast to all connected clients
-                 if (socket && socket.readyState === WebSocket.OPEN) {
-                     socket.send(JSON.stringify({
-                         type: 'media-upload',
-                         media: mediaData
-                     }));
-                 }
- 
-                 document.getElementById('uploadStatus').innerHTML = `<div class="status connected">✓ Media uploaded: ${file.name}</div>`;
-                 setTimeout(() => {
-                     document.getElementById('uploadStatus').innerHTML = '';
-                 }, 3000);
-             };
- 
-             reader.readAsDataURL(file);
-         });
- 
-         // Display media in broadcast area
-         function displayMedia(media) {
-             const display = document.getElementById('mediaDisplay');
-             display.innerHTML = '';
- 
-             if (media.type.startsWith('image')) {
-                 const img = document.createElement('img');
-                 img.src = media.data;
-                 display.appendChild(img);
-             } else if (media.type.startsWith('video')) {
-                 const video = document.createElement('video');
-                 video.src = media.data;
-                 video.controls = true;
-                 video.autoplay = true;
-                 display.appendChild(video);
-             }
-         }
- 
-         // Update connection status
-         function updateStatus(connected) {
-             const status = document.getElementById('status');
-             if (connected) {
-                 status.textContent = '✓ Connected';
-                 status.className = 'status connected';
-             } else {
-                 status.textContent = '✗ Disconnected';
-                 status.className = 'status disconnected';
-             }
-         }
- 
-         // Fallback: Use localStorage and periodic polling if WebSocket isn't available
-         let lastUpdate = 0;
- 
-         function pollMedia() {
-             const stored = localStorage.getItem('broadcastMedia');
-             if (stored) {
-                 const media = JSON.parse(stored);
-                 if (media.timestamp > lastUpdate) {
-                     lastUpdate = media.timestamp;
-                     displayMedia(media);
-                 }
-             }
-         }
- 
-         // Initialize with WebSocket (production ready with server)
-         // For demo purposes, use localStorage
-         document.getElementById('fileInput').addEventListener('change', (e) => {
-             const file = e.target.files[0];
-             if (!file) return;
- 
-             const reader = new FileReader();
-             reader.onload = (event) => {
-                 const media = {
-                     data: event.target.result,
-                     type: file.type,
-                     name: file.name,
-                     timestamp: Date.now()
-                 };
- 
-                 // Store in localStorage for other tabs/windows
-                 localStorage.setItem('broadcastMedia', JSON.stringify(media));
-                 displayMedia(media);
- 
-                 document.getElementById('uploadStatus').innerHTML = `<div class="status connected">✓ Media broadcasted: ${file.name}</div>`;
-                 setTimeout(() => {
-                     document.getElementById('uploadStatus').innerHTML = '';
-                 }, 3000);
-             };
- 
-             reader.readAsDataURL(file);
-         });
- 
-         // Poll for updates from other tabs
-         setInterval(pollMedia, 500);
-         pollMedia();
- 
-         // Update viewer count in localStorage
-         function updateViewerCount() {
-             let count = parseInt(localStorage.getItem('viewerCount') || '0') + 1;
-             localStorage.setItem('viewerCount', count);
-             document.getElementById('viewerCount').textContent = count;
-         }
- 
-         updateViewerCount();
- 
-         // Reset viewer count when page closes
-         window.addEventListener('beforeunload', () => {
-             let count = Math.max(0, parseInt(localStorage.getItem('viewerCount') || '1') - 1);
-             localStorage.setItem('viewerCount', count);
-         });
- 
-         updateStatus(true);
-     </script>
- </body>
- </html>
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📺 Photo/Video Broadcast</h1>
+
+        <div class="login-section" id="loginSection">
+            <h2>Admin Login</h2>
+            <input type="password" id="adminPassword" placeholder="Enter admin password" />
+            <button class="login-btn" onclick="loginAdmin()">Login</button>
+            <div id="loginError"></div>
+        </div>
+
+        <div class="admin-status hidden" id="adminStatus">
+            <span>✓ Admin Mode Active</span>
+            <button class="logout-btn" onclick="logoutAdmin()">Logout</button>
+        </div>
+
+        <div class="admin-section hidden" id="adminPanel">
+            <h2>Admin Panel - Upload Media</h2>
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <p>Click to upload or drag and drop</p>
+                <p style="font-size: 12px; color: #999;">Photos or Videos</p>
+                <button class="upload-btn">Choose File</button>
+            </div>
+            <input type="file" id="fileInput" accept="image/*,video/*">
+            <div id="uploadStatus"></div>
+        </div>
+
+        <div class="broadcast-section">
+            <h2>📡 Live Broadcast</h2>
+            <div id="mediaDisplay">
+                <p class="no-media">Waiting for content...</p>
+            </div>
+            <div class="viewer-count">
+                Viewers connected: <span id="viewerCount">0</span>
+            </div>
+            <div id="status" class="status disconnected">Disconnected</div>
+        </div>
+    </div>
+
+    <script>
+        const ADMIN_PASSWORD = 'admin123'; // Change this to your secure password
+        let isAdmin = false;
+        let socket;
+        let mediaData = null;
+
+        // Admin Login
+        function loginAdmin() {
+            const password = document.getElementById('adminPassword').value;
+            if (password === ADMIN_PASSWORD) {
+                isAdmin = true;
+                localStorage.setItem('adminSession', 'true');
+                document.getElementById('adminPassword').value = '';
+                updateAdminUI();
+            } else {
+                document.getElementById('loginError').innerHTML = '<div class="login-error">❌ Incorrect password</div>';
+                setTimeout(() => {
+                    document.getElementById('loginError').innerHTML = '';
+                }, 3000);
+            }
+        }
+
+        // Admin Logout
+        function logoutAdmin() {
+            isAdmin = false;
+            localStorage.removeItem('adminSession');
+            updateAdminUI();
+        }
+
+        // Update UI based on admin status
+        function updateAdminUI() {
+            const loginSection = document.getElementById('loginSection');
+            const adminStatus = document.getElementById('adminStatus');
+            const adminPanel = document.getElementById('adminPanel');
+
+            if (isAdmin) {
+                loginSection.classList.add('hidden');
+                adminStatus.classList.remove('hidden');
+                adminPanel.classList.remove('hidden');
+            } else {
+                loginSection.classList.remove('hidden');
+                adminStatus.classList.add('hidden');
+                adminPanel.classList.add('hidden');
+            }
+        }
+
+        // Check if already logged in
+        function checkAdminSession() {
+            if (localStorage.getItem('adminSession') === 'true') {
+                isAdmin = true;
+            }
+            updateAdminUI();
+        }
+
+        // Allow Enter key to login
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAdminSession();
+            document.getElementById('adminPassword').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    loginAdmin();
+                }
+            });
+        });
+
+        // Initialize WebSocket connection
+        function initWebSocket() {
+            socket = new WebSocket('ws://localhost:8080');
+
+            socket.onopen = () => {
+                console.log('Connected to server');
+                updateStatus(true);
+                socket.send(JSON.stringify({ type: 'admin-check', isAdmin }));
+            };
+
+            socket.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+
+                if (message.type === 'media-update') {
+                    displayMedia(message.data);
+                }
+
+                if (message.type === 'viewer-count') {
+                    document.getElementById('viewerCount').textContent = message.count;
+                }
+            };
+
+            socket.onclose = () => {
+                console.log('Disconnected from server');
+                updateStatus(false);
+                setTimeout(initWebSocket, 3000);
+            };
+
+            socket.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                updateStatus(false);
+            };
+        }
+
+        // Handle file upload - only for admins
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            if (!isAdmin) {
+                alert('Only admins can upload media');
+                return;
+            }
+
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                mediaData = {
+                    data: event.target.result,
+                    type: file.type,
+                    name: file.name,
+                    timestamp: Date.now(),
+                    uploadedBy: 'admin'
+                };
+
+                // Store in localStorage for other tabs/windows
+                localStorage.setItem('broadcastMedia', JSON.stringify(mediaData));
+                displayMedia(mediaData);
+
+                // Broadcast to all connected clients via WebSocket
+                if (socket && socket.readyState === WebSocket.OPEN) {
+                    socket.send(JSON.stringify({
+                        type: 'media-upload',
+                        media: mediaData,
+                        isAdmin: true
+                    }));
+                }
+
+                document.getElementById('uploadStatus').innerHTML = `<div class="status connected">✓ Media broadcasted: ${file.name}</div>`;
+                setTimeout(() => {
+                    document.getElementById('uploadStatus').innerHTML = '';
+                }, 3000);
+            };
+
+            reader.readAsDataURL(file);
+        });
+
+        // Display media in broadcast area
+        function displayMedia(media) {
+            const display = document.getElementById('mediaDisplay');
+            display.innerHTML = '';
+
+            if (media.type.startsWith('image')) {
+                const img = document.createElement('img');
+                img.src = media.data;
+                display.appendChild(img);
+            } else if (media.type.startsWith('video')) {
+                const video = document.createElement('video');
+                video.src = media.data;
+                video.controls = true;
+                video.autoplay = true;
+                display.appendChild(video);
+            }
+        }
+
+        // Update connection status
+        function updateStatus(connected) {
+            const status = document.getElementById('status');
+            if (connected) {
+                status.textContent = '✓ Connected';
+                status.className = 'status connected';
+            } else {
+                status.textContent = '✗ Disconnected';
+                status.className = 'status disconnected';
+            }
+        }
+
+        // Poll for updates from other tabs
+        function pollMedia() {
+            const stored = localStorage.getItem('broadcastMedia');
+            if (stored) {
+                const media = JSON.parse(stored);
+                displayMedia(media);
+            }
+        }
+
+        setInterval(pollMedia, 500);
+        pollMedia();
+
+        // Update viewer count in localStorage
+        function updateViewerCount() {
+            let count = parseInt(localStorage.getItem('viewerCount') || '0') + 1;
+            localStorage.setItem('viewerCount', count);
+            document.getElementById('viewerCount').textContent = count;
+        }
+
+        updateViewerCount();
+
+        // Reset viewer count when page closes
+        window.addEventListener('beforeunload', () => {
+            let count = Math.max(0, parseInt(localStorage.getItem('viewerCount') || '1') - 1);
+            localStorage.setItem('viewerCount', count);
+        });
+
+        updateStatus(true);
+    </script>
+</body>
+</html>
